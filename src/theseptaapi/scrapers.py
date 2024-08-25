@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 STATION_NAMES_URL = "https://www3.septa.org/VIRegionalRail.html"
 BUS_AND_TROLLEY_ROUTES_URL = "https://www3.septa.org/VIBusAndTrolley.html"
 
+
 def get_station_names() -> dict[str, str]:
     page = requests.get(STATION_NAMES_URL)
     soup = BeautifulSoup(page.content, "html.parser")

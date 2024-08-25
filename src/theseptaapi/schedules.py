@@ -39,10 +39,20 @@ class ScheduleGenerator:
             list: A list of dictionaries, with stop ID and name.
         """
         stops = requests.get(self.STOPS_URL.format(line)).json()
-        unique_stops_str = set(f"{stop['stop_id']}|{stop['stop_name']}" for stop in stops)
-        return [{"stop_id": stop.split("|")[0], "stop_name": stop.split("|")[1]} for stop in unique_stops_str]
+        unique_stops_str = []
+        for stop in stops:
+            stop_str = f"{stop['stop_id']}|{stop['stop_name']}"
+            if stop_str not in unique_stops_str:
+                unique_stops_str.append(stop_str)
 
-    def get_schedule_for_station(self, line: str, orig: str, direction: int) -> dict[str, list[dict[str, str]]]:
+        return [
+            {"stop_id": stop.split("|")[0], "stop_name": stop.split("|")[1]}
+            for stop in unique_stops_str
+        ]
+
+    def get_schedule_for_station(
+        self, line: str, orig: str, direction: int
+    ) -> dict[str, list[dict[str, str]]]:
         """
         Retrieves and processes the train schedule for a specific stop on a given line and direction.
 
@@ -58,7 +68,9 @@ class ScheduleGenerator:
                 - "arrival_time": The time at which the train arrives at the specified stop.
         """
 
-        stop_codes = [stop for stop in self.get_stations_for_line(line) if (stop["stop_name"] == orig)]
+        stop_codes = [
+            stop for stop in self.get_stations_for_line(line) if (stop["stop_name"] == orig)
+        ]
         stop_dict = {stop["stop_name"]: stop["stop_id"] for stop in stop_codes}
         raw_schedule = requests.get(self.SCHEDULE_URL.format(line, stop_dict[orig])).json()
 
@@ -81,13 +93,16 @@ class ScheduleGenerator:
                 most_recent.append(max(same_train_id, key=lambda x: x["release_name"]))
 
             most_recent = [
-                {"train_id": str(train["block_id"]), "arrival_time": train["arrival_time"]} for train in most_recent
+                {"train_id": str(train["block_id"]), "arrival_time": train["arrival_time"]}
+                for train in most_recent
             ]
             sorted_trains.append(sorted(most_recent, key=lambda x: x["arrival_time"]))
 
         return {"weekday": sorted_trains[0], "weekend": sorted_trains[1]}
 
-    def get_schedule_for_line(self, line: str, orig: str, dest: str, direction: int) -> dict[str, list[dict[str, str]]]:
+    def get_schedule_for_line(
+        self, line: str, orig: str, dest: str, direction: int
+    ) -> dict[str, list[dict[str, str]]]:
         """
         Retrieves the train schedule for a specific line, origin, and destination, separated by weekday and weekend.
 
@@ -107,13 +122,19 @@ class ScheduleGenerator:
 
         def flatten_schedule(orig_schedule, dest_schedule):
             orig_flattened = {
-                train["train_id"]: {k: v for k, v in train.items() if k != "train_id"} for train in orig_schedule
+                train["train_id"]: {k: v for k, v in train.items() if k != "train_id"}
+                for train in orig_schedule
             }
             dest_flattened = {
-                train["train_id"]: {k: v for k, v in train.items() if k != "train_id"} for train in dest_schedule
+                train["train_id"]: {k: v for k, v in train.items() if k != "train_id"}
+                for train in dest_schedule
             }
             schedule = [
-                {"train_id": str(k), "depart_time": v["arrival_time"], "arrive_time": dest_flattened[k]["arrival_time"]}
+                {
+                    "train_id": str(k),
+                    "depart_time": v["arrival_time"],
+                    "arrive_time": dest_flattened[k]["arrival_time"],
+                }
                 for k, v in orig_flattened.items()
             ]
             return sorted(schedule, key=lambda x: x["depart_time"])

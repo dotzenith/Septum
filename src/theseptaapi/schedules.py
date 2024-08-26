@@ -1,28 +1,59 @@
 import requests
-
-EXAMPLE_SCHEDULE = "https://flat-api.septa.org/schedules/stops/TRE/90701/schedule.json"
+from fastapi import HTTPException
 
 
 class ScheduleGenerator:
     STOPS_URL = "https://flat-api.septa.org/stops/{}/stops.json"
     SCHEDULE_URL = "https://flat-api.septa.org/schedules/stops/{}/{}/schedule.json"
-    LINES = [
-        "AIR",
-        "CHE",
-        "CHW",
-        "CYN",
-        "FOX",
-        "LAN",
-        "MED",
-        "NOR",
-        "PAO",
-        "TRE",
-        "WAR",
-        "WIL",
-        "WTR",
-    ]
+    LINES = {
+        "AIR": "Airport",
+        "CHE": "Chestnut Hill East",
+        "CHW": "Chestnut Hill West",
+        "CYN": "Cynwyd",
+        "FOX": "Fox Chase",
+        "LAN": "Lansdale/Doylestown",
+        "MED": "Media/Wawa",
+        "NOR": "Manayunk/Norristown",
+        "PAO": "Paoli/Thorndale",
+        "TRE": "Trenton",
+        "WAR": "Warminster",
+        "WIL": "Wilmington/Newark",
+        "WTR": "West Trenton",
+    }
 
-    def get_lines(self) -> list[str]:
+    def validate_line(self, line: str):
+        if line not in self.LINES.keys():
+            raise HTTPException(status_code=400, detail=f"Invalid Line: {line}")
+
+    def validate_direction(self, direction: int):
+        if not (direction == 0 or direction == 1):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid Direction: {direction}. Use 0 for inbound, and 1 for outbound",
+            )
+
+    def validate_station_for_line(self, line: str, station: str):
+        stations_for_line = [stop["stop_name"] for stop in self.get_stations_for_line(line)]
+        if station not in stations_for_line:
+            raise HTTPException(
+                status_code=400, detail=f"Invalid Station: {station} for line: {line}"
+            )
+
+    def validate_orig_dest_for_direction(self, line: str, orig: str, dest: str, direction: int):
+        stations = [stop["stop_name"] for stop in self.get_stations_for_line(line)]
+        orig_index = stations.index(orig)
+
+        if direction == 0 and (dest not in stations[orig_index+1:]):
+            raise HTTPException(
+                status_code=400, detail=f"cannot go from {orig} to {dest} going inbound"
+            )
+
+        if direction == 1 and (dest not in stations[:orig_index]):
+            raise HTTPException(
+                status_code=400, detail=f"cannot go from {orig} to {dest} going outbound"
+            )
+
+    def get_lines(self) -> dict[str, str]:
         """
         Gets the abbreviated for each line supported by the API
         """

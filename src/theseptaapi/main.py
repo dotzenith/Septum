@@ -9,13 +9,13 @@ from theseptaapi.models import (BusAndTrolleyOutput, LinesOutput,
                                 StationOutput)
 from theseptaapi.schedules import ScheduleGenerator
 
-app = FastAPI()
+app = FastAPI(docs_url="/")
 schedule = ScheduleGenerator()
 
 
 # Basic Stations endpoint
 @app.get("/stations", response_model=list[StationOutput])
-def get_stations():
+async def get_stations():
     """
     Retrieves "Regional Rail Inputs" used by setpa's public API (e.g, the `/NextToArrive/index.php` endpoint).
 
@@ -32,7 +32,7 @@ def get_stations():
 
 # Route Endpoints
 @app.get("/routes/bus", response_model=list[BusAndTrolleyOutput])
-def get_bus_routes():
+async def get_bus_routes():
     """
     Retrieve bus routes used by septa's public API (e.g, the `/TransitView/index.php` endpoint).
 
@@ -44,7 +44,7 @@ def get_bus_routes():
 
 
 @app.get("/routes/trolley", response_model=list[BusAndTrolleyOutput])
-def get_trolley_routes():
+async def get_trolley_routes():
     """
     Retrieve trolley routes used by septa's public API (e.g, the `/TransitView/index.php` endpoint).
 
@@ -57,7 +57,7 @@ def get_trolley_routes():
 
 # Schedule Endpoints
 @app.get("/schedule/lines", response_model=list[LinesOutput])
-def get_lines():
+async def get_lines():
     """
     Retrieve a list of all available lines. Each line is represented by its code and name.
 
@@ -68,7 +68,7 @@ def get_lines():
 
 
 @app.get("/schedule/stations", response_model=list[ScheduleStationOuput])
-def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
+async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
     """
     Retrieve a list of stations for a specific line.
 
@@ -93,7 +93,7 @@ def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
 
 
 @app.get("/schedule", response_model=ScheduleMainOutput)
-def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
+async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
     """
     Retrieve the schedule for a specific station on a given route.
 

@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, OrderedDict
+
 import requests
 
 from theseptaapi.enum import Direction
@@ -44,7 +45,9 @@ class ScheduleGenerator:
         """
         return self.LINES
 
-    def get_stations_for_line(self, line: str, direction: Optional[Direction] = Direction.INBOUND) -> list[dict[str, str]]:
+    def get_stations_for_line(
+        self, line: str, direction: Optional[Direction] = Direction.INBOUND
+    ) -> list[dict[str, str]]:
         """
         Retrieves the list of stops for a specified regional rail line.
 
@@ -62,14 +65,15 @@ class ScheduleGenerator:
         direction_int = self.LINES_DIRECTION[line][direction]
 
         # dict comprehension to ensure uniqueness
-        stops_list = list(
-            {
-                stop["stop_id"]: {"stop_id": str(stop["stop_id"]), "stop_name": stop["stop_name"]}
-                for stop in stops
-                if stop["direction_id"] == direction_int
-            }.values()
-        )
+        hash = OrderedDict()
+        for stop in stops:
+            if stop["direction_id"] == direction_int:
+                hash[stop["stop_id"]] = {
+                    "stop_id": str(stop["stop_id"]),
+                    "stop_name": stop["stop_name"],
+                }
 
+        stops_list = list(hash.values())
         return stops_list
 
     def get_schedule_for_station(

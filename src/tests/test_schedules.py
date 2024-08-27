@@ -91,3 +91,27 @@ class TestReturnData:
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
+
+    @pytest.mark.parametrize(
+        "line, orig, dest, direction",
+        [
+            ("AIR", "Airport Terminal B", "Temple University", "outbound"),
+            ("CHE", "Chestnut Hill East", "Temple University", "outbound"),
+            ("CYN", "Cynwyd", "Suburban Station", "outbound"),
+            ("CHW", "Chestnut Hill West", "Temple University", "outbound"),
+            ("FOX", "Fox Chase", "Suburban Station", "outbound"),
+            ("LAN", "Doylestown", "Jefferson Station", "outbound"),
+            ("MED", "Wawa", "Temple University", "outbound"),
+            ("NOR", "Main Street", "Penn Medicine Station", "outbound"),
+            ("PAO", "Thorndale", "Overbrook", "outbound"),
+            ("TRE", "Trenton", "Temple University", "outbound"),
+            ("WAR", "Warminster", "Fern Rock T C", "outbound"),
+            ("WIL", "Newark", "Wilmington", "outbound"),
+            ("WTR", "Yardley", "Elkins Park", "outbound"),
+        ],
+    )
+    def test_invalid_direction_for_orig_dest_all_lines(self, line, orig, dest, direction):
+        request = self.client.get(
+            f"/api/schedule?line={line}&orig={orig}&dest={dest}&direction={direction}"
+        )
+        assert request.status_code == 400

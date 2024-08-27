@@ -125,6 +125,10 @@ async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
         because you cannot go to Gray 30th Street while going away from the city (i.e outbound). The API the best it
         can to validate this and return an error message, but there might be edge cases that still slip away, please
         open an issue on https://github.com/dotzenith/TheSeptaAPI
+
+        Also note that schedule items returned when `dest` is not passed in might have inconsistencies.
+        Some of the items might be for trains that don't go anywhere after this station. Therefore passing in `dest`
+        is recommended.
     """
     if query.dest is not None:
         return schedule.get_schedule_for_line(query.line, query.orig, query.dest, query.direction)

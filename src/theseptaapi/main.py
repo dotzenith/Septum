@@ -77,6 +77,7 @@ async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
 
     Args:
         line: The line code as seen in `/schedule/lines`
+        direction: "inbound"/"outbound"
 
     Returns:
         A list of dictionaries, each containing a stop_id and stop_name.
@@ -89,7 +90,7 @@ async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
         These station names are not the same as `/stations`. These are to be used with the `/schedule` endpoint,
         and not with the public septa api.
     """
-    return schedule.get_stations_for_line(line.line)
+    return schedule.get_stations_for_line(line.line, line.direction)
 
 
 @app.get("/api/schedule", response_model=ScheduleMainOutput)

@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from pydantic import BaseModel, field_validator, model_validator
 
+from theseptaapi.enum import Direction
 from theseptaapi.schedules import ScheduleGenerator
 
 schedule = ScheduleGenerator()
@@ -8,6 +9,7 @@ schedule = ScheduleGenerator()
 
 class StationInput(BaseModel):
     line: str
+    direction: Direction | None = None
 
     @field_validator("line")
     def validate_line(cls, value):
@@ -18,9 +20,19 @@ class StationInput(BaseModel):
 
 class ScheduleInput(BaseModel):
     line: str
-    direction: int
+    direction: Direction
     orig: str
     dest: str | None = None
+
+    @staticmethod
+    def validate_orig_dest_for_direction(line: str, orig: str, dest: str, direction: Direction):
+        stations = [stop["stop_name"] for stop in schedule.get_stations_for_line(line, direction)]
+        orig_index = stations.index(orig)
+
+        if dest not in stations[orig_index + 1 :]:
+            raise HTTPException(
+                status_code=400, detail=f"cannot go from {orig} to {dest} going {direction.value}"
+            )
 
     @staticmethod
     def validate_station_for_line(line: str, station: str):
@@ -36,21 +48,13 @@ class ScheduleInput(BaseModel):
             raise HTTPException(status_code=400, detail=f"Invalid Line: {value}")
         return value
 
-    @field_validator("direction")
-    def validate_direction(cls, value):
-        if not (value == 0 or value == 1):
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid Direction: {value}. Use 0 for inbound, and 1 for outbound",
-            )
-        return value
-
     @model_validator(mode="after")
     def validate_mode(self):
 
         self.validate_station_for_line(self.line, self.orig)
         if self.dest is not None:
             self.validate_station_for_line(self.line, self.dest)
+            self.validate_orig_dest_for_direction(self.line, self.orig, self.dest, self.direction)
             return self
 
         return self

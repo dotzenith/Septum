@@ -35,34 +35,59 @@ class TestReturnData:
         assert self.client.get("/api/schedule/stations?line=NON_EXISTENT_LINE").status_code == 400
 
     def test_valid_single_station_schedule(self):
-        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&direction=0")
+        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&direction=inbound")
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_valid_orig_to_dest_inbound_schedule(self):
         request = self.client.get(
-            "/api/schedule?line=TRE&orig=Trenton&dest=Gray 30th Street&direction=0"
+            "/api/schedule?line=TRE&orig=Trenton&dest=Gray 30th Street&direction=inbound"
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_valid_orig_to_dest_outbound_schedule(self):
         request = self.client.get(
-            "/api/schedule?line=TRE&orig=Gray 30th Street&dest=Trenton&direction=1"
+            "/api/schedule?line=TRE&orig=Gray 30th Street&dest=Trenton&direction=outbound"
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_invalid_direction(self):
-        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&direction=3")
-        assert request.status_code == 400
+        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&direction=NON_EXISTENT_DIRECTION")
+        assert request.status_code == 422
 
     def test_invalid_station_for_line(self):
         # Airport line does not have a stop at Trenton
-        request = self.client.get("/api/schedule?line=AIR&orig=Trenton&direction=0")
+        request = self.client.get("/api/schedule?line=AIR&orig=Trenton&direction=inbound")
         assert request.status_code == 400
 
     def test_invalid_dest_for_line(self):
         # Trenton line does have the Trenton station, but not the Eastwick station
-        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&dest=Eastwick&direction=0")
+        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&dest=Eastwick&direction=inbound")
         assert request.status_code == 400
+
+    @pytest.mark.parametrize(
+        "line, orig, dest, direction",
+        [
+            ("AIR", "Airport Terminal B", "Temple University", "inbound"),
+            ("CHE", "Chestnut Hill East", "Temple University", "inbound"),
+            ("CYN", "Cynwyd", "Suburban Station", "inbound"),
+            ("CHW", "Chestnut Hill West", "Temple University", "inbound"),
+            ("FOX", "Fox Chase", "Suburban Station", "inbound"),
+            ("LAN", "Doylestown", "Jefferson Station", "inbound"),
+            ("MED", "Wawa", "Temple University", "inbound"),
+            ("NOR", "Main Street", "Penn Medicine Station", "inbound"),
+            ("PAO", "Thorndale", "Overbrook", "inbound"),
+            ("TRE", "Trenton", "Temple University", "inbound"),
+            ("WAR", "Warminster", "Fern Rock T C", "inbound"),
+            ("WIL", "Newark", "Wilmington", "inbound"),
+            ("WTR", "Yardley", "Elkins Park", "inbound"),
+        ],
+    )
+    def test_valid_direction_for_orig_dest_all_lines(self, line, orig, dest, direction):
+        request = self.client.get(
+            f"/api/schedule?line={line}&orig={orig}&dest={dest}&direction={direction}"
+        )
+        assert request.status_code == 200
+        ScheduleMainOutput.model_validate_json(request.content)

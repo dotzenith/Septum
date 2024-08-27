@@ -1,4 +1,7 @@
+from typing import Optional
 import requests
+
+from theseptaapi.enum import Direction
 
 
 class ScheduleGenerator:
@@ -19,6 +22,21 @@ class ScheduleGenerator:
         {"line_code": "WIL", "line_name": "Wilmington/Newark"},
         {"line_code": "WTR", "line_name": "West Trenton"},
     ]
+    LINES_DIRECTION = {
+        "AIR": {"inbound": 0, "outbound": 1},
+        "CHE": {"inbound": 1, "outbound": 0},
+        "CHW": {"inbound": 0, "outbound": 1},
+        "CYN": {"inbound": 0, "outbound": 1},
+        "FOX": {"inbound": 1, "outbound": 0},
+        "LAN": {"inbound": 1, "outbound": 0},
+        "MED": {"inbound": 0, "outbound": 1},
+        "NOR": {"inbound": 1, "outbound": 0},
+        "PAO": {"inbound": 0, "outbound": 1},
+        "TRE": {"inbound": 0, "outbound": 1},
+        "WAR": {"inbound": 1, "outbound": 0},
+        "WIL": {"inbound": 0, "outbound": 1},
+        "WTR": {"inbound": 1, "outbound": 0},
+    }
 
     def get_lines(self) -> list[dict[str, str]]:
         """
@@ -26,7 +44,7 @@ class ScheduleGenerator:
         """
         return self.LINES
 
-    def get_stations_for_line(self, line: str) -> list[dict[str, str]]:
+    def get_stations_for_line(self, line: str, direction: Optional[Direction] = Direction.INBOUND) -> list[dict[str, str]]:
         """
         Retrieves the list of stops for a specified regional rail line.
 
@@ -36,20 +54,25 @@ class ScheduleGenerator:
         Returns:
             list: A list of dictionaries, with stop ID and name.
         """
-        stops = requests.get(self.STOPS_URL.format(line)).json()
-        unique_stops_str = []
-        for stop in stops:
-            stop_str = f"{stop['stop_id']}|{stop['stop_name']}"
-            if stop_str not in unique_stops_str:
-                unique_stops_str.append(stop_str)
+        if direction is None:
+            direction = Direction.INBOUND
 
-        return [
-            {"stop_id": stop.split("|")[0], "stop_name": stop.split("|")[1]}
-            for stop in unique_stops_str
-        ]
+        stops = requests.get(self.STOPS_URL.format(line)).json()
+        direction_int = self.LINES_DIRECTION[line][direction]
+
+        # dict comprehension to ensure uniqueness
+        stops_list = list(
+            {
+                stop["stop_id"]: {"stop_id": str(stop["stop_id"]), "stop_name": stop["stop_name"]}
+                for stop in stops
+                if stop["direction_id"] == direction_int
+            }.values()
+        )
+
+        return stops_list
 
     def get_schedule_for_station(
-        self, line: str, orig: str, direction: int
+        self, line: str, orig: str, direction: Direction
     ) -> dict[str, list[dict[str, str]]]:
         """
         Retrieves and processes the train schedule for a specific stop on a given line and direction.
@@ -67,10 +90,13 @@ class ScheduleGenerator:
         """
 
         stop_codes = [
-            stop for stop in self.get_stations_for_line(line) if (stop["stop_name"] == orig)
+            stop
+            for stop in self.get_stations_for_line(line, direction)
+            if (stop["stop_name"] == orig)
         ]
         stop_dict = {stop["stop_name"]: stop["stop_id"] for stop in stop_codes}
         raw_schedule = requests.get(self.SCHEDULE_URL.format(line, stop_dict[orig])).json()
+        direction_int = self.LINES_DIRECTION[line][direction]
 
         service_ids = (["M1"], ["M2", "M3"])
         sorted_trains = []
@@ -79,7 +105,7 @@ class ScheduleGenerator:
             trains = [
                 train
                 for train in raw_schedule
-                if (train["service_id"] in service_id and train["direction_id"] == direction)
+                if (train["service_id"] in service_id and train["direction_id"] == direction_int)
             ]
             train_ids = set(train["block_id"] for train in trains)
 
@@ -99,7 +125,7 @@ class ScheduleGenerator:
         return {"weekday": sorted_trains[0], "weekend": sorted_trains[1]}
 
     def get_schedule_for_line(
-        self, line: str, orig: str, dest: str, direction: int
+        self, line: str, orig: str, dest: str, direction: Direction
     ) -> dict[str, list[dict[str, str]]]:
         """
         Retrieves the train schedule for a specific line, origin, and destination, separated by weekday and weekend.
@@ -127,6 +153,12 @@ class ScheduleGenerator:
                 train["train_id"]: {k: v for k, v in train.items() if k != "train_id"}
                 for train in dest_schedule
             }
+
+            orig_keys = list(orig_flattened.keys())
+            for key in orig_keys:
+                if key not in dest_flattened.keys():
+                    orig_flattened.pop(key)
+
             schedule = [
                 {
                     "train_id": str(k),

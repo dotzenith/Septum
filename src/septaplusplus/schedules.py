@@ -2,7 +2,7 @@ from typing import Optional, OrderedDict
 
 import requests
 
-from theseptaapi.enum import Direction
+from septaplusplus.enum import Direction
 
 
 class ScheduleGenerator:

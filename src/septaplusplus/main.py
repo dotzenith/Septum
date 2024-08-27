@@ -2,12 +2,12 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI
 
-import theseptaapi.scrapers as scrapers
-from theseptaapi.models import (BusAndTrolleyOutput, LinesOutput,
+import septaplusplus.scrapers as scrapers
+from septaplusplus.models import (BusAndTrolleyOutput, LinesOutput,
                                 ScheduleInput, ScheduleMainOutput,
                                 ScheduleStationOuput, StationInput,
                                 StationOutput)
-from theseptaapi.schedules import ScheduleGenerator
+from septaplusplus.schedules import ScheduleGenerator
 
 app = FastAPI(docs_url="/")
 schedule = ScheduleGenerator()
@@ -124,7 +124,7 @@ async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
         This is because Gray 30th Street, is towards the city (i.e inbound). Your direction cannot be 1,
         because you cannot go to Gray 30th Street while going away from the city (i.e outbound). The API the best it
         can to validate this and return an error message, but there might be edge cases that still slip away, please
-        open an issue on https://github.com/dotzenith/TheSeptaAPI
+        open an issue on https://github.com/dotzenith/septaplusplus
 
         Also note that schedule items returned when `dest` is not passed in might have inconsistencies.
         Some of the items might be for trains that don't go anywhere after this station. Therefore passing in `dest`

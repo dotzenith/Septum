@@ -5,4 +5,4 @@ WORKDIR /app
 COPY . .
 RUN uv sync --frozen --no-cache
 
-CMD ["uv", "run", "fastapi", "run", "src/theseptaapi/main.py"]
+CMD ["uv", "run", "fastapi", "run", "src/septaplusplus/main.py"]

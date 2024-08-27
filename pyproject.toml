@@ -1,5 +1,5 @@
 [project]
-name = "theseptaapi"
+name = "septaplusplus"
 version = "0.1.0"
 description = "Endpoints to augment septa's public API"
 authors = [

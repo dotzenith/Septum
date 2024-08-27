@@ -6,8 +6,8 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import TypeAdapter
 
-from theseptaapi.main import app, schedule
-from theseptaapi.models import LinesOutput, ScheduleMainOutput, ScheduleStationOuput
+from septaplusplus.main import app, schedule
+from septaplusplus.models import LinesOutput, ScheduleMainOutput, ScheduleStationOuput
 
 
 class TestReturnData:

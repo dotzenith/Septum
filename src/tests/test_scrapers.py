@@ -4,10 +4,10 @@ A module to test the scraper endpoints
 
 import pytest
 from fastapi.testclient import TestClient
-from theseptaapi.models import StationOutput, BusAndTrolleyOutput
+from septaplusplus.models import StationOutput, BusAndTrolleyOutput
 from pydantic import TypeAdapter
 
-from theseptaapi.main import app
+from septaplusplus.main import app
 
 
 class TestReturnData:

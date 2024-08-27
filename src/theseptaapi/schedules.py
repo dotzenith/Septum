@@ -1,5 +1,4 @@
 import requests
-from fastapi import HTTPException
 
 
 class ScheduleGenerator:
@@ -20,38 +19,6 @@ class ScheduleGenerator:
         "WIL": "Wilmington/Newark",
         "WTR": "West Trenton",
     }
-
-    def validate_line(self, line: str):
-        if line not in self.LINES.keys():
-            raise HTTPException(status_code=400, detail=f"Invalid Line: {line}")
-
-    def validate_direction(self, direction: int):
-        if not (direction == 0 or direction == 1):
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid Direction: {direction}. Use 0 for inbound, and 1 for outbound",
-            )
-
-    def validate_station_for_line(self, line: str, station: str):
-        stations_for_line = [stop["stop_name"] for stop in self.get_stations_for_line(line)]
-        if station not in stations_for_line:
-            raise HTTPException(
-                status_code=400, detail=f"Invalid Station: {station} for line: {line}"
-            )
-
-    def validate_orig_dest_for_direction(self, line: str, orig: str, dest: str, direction: int):
-        stations = [stop["stop_name"] for stop in self.get_stations_for_line(line)]
-        orig_index = stations.index(orig)
-
-        if direction == 0 and (dest not in stations[orig_index+1:]):
-            raise HTTPException(
-                status_code=400, detail=f"cannot go from {orig} to {dest} going inbound"
-            )
-
-        if direction == 1 and (dest not in stations[:orig_index]):
-            raise HTTPException(
-                status_code=400, detail=f"cannot go from {orig} to {dest} going outbound"
-            )
 
     def get_lines(self) -> dict[str, str]:
         """
@@ -163,12 +130,12 @@ class ScheduleGenerator:
             schedule = [
                 {
                     "train_id": str(k),
-                    "depart_time": v["arrival_time"],
-                    "arrive_time": dest_flattened[k]["arrival_time"],
+                    "departure_time": v["arrival_time"],
+                    "arrival_time": dest_flattened[k]["arrival_time"],
                 }
                 for k, v in orig_flattened.items()
             ]
-            return sorted(schedule, key=lambda x: x["depart_time"])
+            return sorted(schedule, key=lambda x: x["departure_time"])
 
         orig_schedule = self.get_schedule_for_station(line, orig, direction)
         dest_schedule = self.get_schedule_for_station(line, dest, direction)

@@ -18,15 +18,15 @@ class TestReturnData:
     client = TestClient(app)
 
     def test_stations_endpoint(self):
-        request = self.client.get("/stations")
+        request = self.client.get("/api/stations")
         assert request.status_code == 200
         TypeAdapter(list[StationOutput]).validate_json(request.content)
 
     @pytest.mark.parametrize(
         "route",
         [
-            "/routes/bus",
-            "/routes/trolley",
+            "/api/routes/bus",
+            "/api/routes/trolley",
         ],
     )
     def test_bus_and_trolley_endpoints(self, route):

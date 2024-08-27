@@ -14,7 +14,7 @@ schedule = ScheduleGenerator()
 
 
 # Basic Stations endpoint
-@app.get("/stations", response_model=list[StationOutput])
+@app.get("/api/stations", response_model=list[StationOutput])
 async def get_stations():
     """
     Retrieves "Regional Rail Inputs" used by setpa's public API (e.g, the `/NextToArrive/index.php` endpoint).
@@ -31,7 +31,7 @@ async def get_stations():
 
 
 # Route Endpoints
-@app.get("/routes/bus", response_model=list[BusAndTrolleyOutput])
+@app.get("/api/routes/bus", response_model=list[BusAndTrolleyOutput])
 async def get_bus_routes():
     """
     Retrieve bus routes used by septa's public API (e.g, the `/TransitView/index.php` endpoint).
@@ -43,7 +43,7 @@ async def get_bus_routes():
     return scrapers.get_bus_routes()
 
 
-@app.get("/routes/trolley", response_model=list[BusAndTrolleyOutput])
+@app.get("/api/routes/trolley", response_model=list[BusAndTrolleyOutput])
 async def get_trolley_routes():
     """
     Retrieve trolley routes used by septa's public API (e.g, the `/TransitView/index.php` endpoint).
@@ -56,7 +56,7 @@ async def get_trolley_routes():
 
 
 # Schedule Endpoints
-@app.get("/schedule/lines", response_model=list[LinesOutput])
+@app.get("/api/schedule/lines", response_model=list[LinesOutput])
 async def get_lines():
     """
     Retrieve a list of all available lines. Each line is represented by its code and name.
@@ -67,7 +67,7 @@ async def get_lines():
     return schedule.get_lines()
 
 
-@app.get("/schedule/stations", response_model=list[ScheduleStationOuput])
+@app.get("/api/schedule/stations", response_model=list[ScheduleStationOuput])
 async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
     """
     Retrieve a list of stations for a specific line.
@@ -92,7 +92,7 @@ async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
     return schedule.get_stations_for_line(line.line)
 
 
-@app.get("/schedule", response_model=ScheduleMainOutput)
+@app.get("/api/schedule", response_model=ScheduleMainOutput)
 async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
     """
     Retrieve the schedule for a specific station on a given route.

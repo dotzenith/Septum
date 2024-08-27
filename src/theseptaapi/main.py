@@ -77,7 +77,7 @@ async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
 
     Args:
         line: The line code as seen in `/schedule/lines`
-        direction: "inbound"/"outbound"
+        direction: (str, None): "inbound" (default)/"outbound"
 
     Returns:
         A list of dictionaries, each containing a stop_id and stop_name.
@@ -100,7 +100,7 @@ async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
 
     Args:
         line (str): The transit line code.
-        direction (int): The direction of travel (0 for inbound, 1 for outbound).
+        direction (Direction): The direction of travel. "inbound" or "outbound"
         orig (str): The origin station name.
         dest (str, optional): The destination station name.
 
@@ -122,8 +122,9 @@ async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
         IMPORTANT: Be very careful about the `direction` parameter.
         For example, if you are going from Trenton to Gray 30th Street on the TRE line, your direction should be 0.
         This is because Gray 30th Street, is towards the city (i.e inbound). Your direction cannot be 1,
-        because you cannot go to Gray 30th Street while going away from the city (i.e outbound). The API
-        will return a response even if you get the direction wrong, but the results will be unreliable.
+        because you cannot go to Gray 30th Street while going away from the city (i.e outbound). The API the best it
+        can to validate this and return an error message, but there might be edge cases that still slip away, please
+        open an issue on https://github.com/dotzenith/TheSeptaAPI
     """
     if query.dest is not None:
         return schedule.get_schedule_for_line(query.line, query.orig, query.dest, query.direction)

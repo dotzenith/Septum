@@ -50,6 +50,7 @@ class ScheduleGenerator:
 
         Args:
             line (str): The name of the regional rail line (e.g., "TRE").
+            direction (Optional[Direction]): The direction of travel. "inbound" or "outbound"
 
         Returns:
             list: A list of dictionaries, with stop ID and name.
@@ -80,7 +81,7 @@ class ScheduleGenerator:
         Args:
             line (str): The name of the train line for which the schedule is requested (e.g., "TRE").
             stop (str): The stop ID or stop name for which the schedule is requested (e.g., "Gray 30th Street").
-            direction (int): The direction of travel. 0 indicates inbound and 1 indicates outbound.
+            direction (Direction): The direction of travel. "inbound" or "outbound"
 
         Returns:
             dict[str, list[dict[str, str]]]: A dictionary with two keys, "weekday" and "weekend", each containing a list of
@@ -134,7 +135,7 @@ class ScheduleGenerator:
             line (str): The name of the train line for which the schedule is requested (e.g., "TRE").
             orig (str): The name of the origin stop (e.g., "Trenton)".
             dest (str): The name of the destination stop (e.g., "Gray 30th Street).
-            direction (int): The direction of travel. 0 indicates inbound and 1 indicates outbound.
+            direction (Direction): The direction of travel. "inbound" or "outbound"
 
         Returns:
             dict[str, list[dict[str, str]]]: A dictionary with two keys, "weekday" and "weekend", each containing a list of

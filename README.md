@@ -4,9 +4,9 @@
 <div align="center">
    <p></p>
 
-   <img src="https://img.shields.io/github/stars/dotzenith/TheSeptaAPI?color=F8BD96&labelColor=302D41&style=for-the-badge">
+   <img src="https://img.shields.io/github/stars/dotzenith/TheSeptaAPI?color=DDB6F2&labelColor=302D41&style=for-the-badge">
 
-   <img src="https://img.shields.io/github/forks/dotzenith/TheSeptaAPI?color=DDB6F2&labelColor=302D41&style=for-the-badge">
+   <img src="https://img.shields.io/github/forks/dotzenith/TheSeptaAPI?color=F8BD96&labelColor=302D41&style=for-the-badge">
 
    <img src="https://img.shields.io/github/actions/workflow/status/dotzenith/TheSeptaAPI/deploy.yml?branch=main&color=89b4fa&labelColor=302D41&style=for-the-badge&label=Deployment"/>
 

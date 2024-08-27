@@ -19,7 +19,7 @@ jobs:
         port: 2222
         command_timeout: 30m
         script: |
-          cd ~/web/TheSeptaApi
+          cd ~/web/TheSeptaAPI
           git pull origin main
           docker build -t septaapi:latest .
           bash ~/.bin/septa_time

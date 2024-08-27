@@ -23,10 +23,8 @@ jobs:
     
     - name: Install dependencies with uv
       run: |
-        uv pip install --no-cache --system -r requirements-dev.lock
+        uv sync --no-cache --frozen
     
     - name: Run tests with pytest
       run: |
-        pytest
-
-
+        uv run pytest

@@ -1,9 +1,8 @@
-FROM python:slim
-
-RUN pip install uv
+FROM python:3.11-slim-bookworm
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 COPY . .
-RUN uv pip install --no-cache --system -r requirements.lock
+RUN uv sync --frozen --no-cache
 
-CMD fastapi run src/theseptaapi/main.py
+CMD ["uv", "run", "fastapi", "run", "src/theseptaapi/main.py"]

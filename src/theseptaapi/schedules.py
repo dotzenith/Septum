@@ -4,23 +4,23 @@ import requests
 class ScheduleGenerator:
     STOPS_URL = "https://flat-api.septa.org/stops/{}/stops.json"
     SCHEDULE_URL = "https://flat-api.septa.org/schedules/stops/{}/{}/schedule.json"
-    LINES = {
-        "AIR": "Airport",
-        "CHE": "Chestnut Hill East",
-        "CHW": "Chestnut Hill West",
-        "CYN": "Cynwyd",
-        "FOX": "Fox Chase",
-        "LAN": "Lansdale/Doylestown",
-        "MED": "Media/Wawa",
-        "NOR": "Manayunk/Norristown",
-        "PAO": "Paoli/Thorndale",
-        "TRE": "Trenton",
-        "WAR": "Warminster",
-        "WIL": "Wilmington/Newark",
-        "WTR": "West Trenton",
-    }
+    LINES = [
+        {"line_code": "AIR", "line_name": "Airport"},
+        {"line_code": "CHE", "line_name": "Chestnut Hill East"},
+        {"line_code": "CHW", "line_name": "Chestnut Hill West"},
+        {"line_code": "CYN", "line_name": "Cynwyd"},
+        {"line_code": "FOX", "line_name": "Fox Chase"},
+        {"line_code": "LAN", "line_name": "Lansdale/Doylestown"},
+        {"line_code": "MED", "line_name": "Media/Wawa"},
+        {"line_code": "NOR", "line_name": "Manayunk/Norristown"},
+        {"line_code": "PAO", "line_name": "Paoli/Thorndale"},
+        {"line_code": "TRE", "line_name": "Trenton"},
+        {"line_code": "WAR", "line_name": "Warminster"},
+        {"line_code": "WIL", "line_name": "Wilmington/Newark"},
+        {"line_code": "WTR", "line_name": "West Trenton"},
+    ]
 
-    def get_lines(self) -> dict[str, str]:
+    def get_lines(self) -> list[dict[str, str]]:
         """
         Gets the abbreviated for each line supported by the API
         """
@@ -63,7 +63,7 @@ class ScheduleGenerator:
             dict[str, list[dict[str, str]]]: A dictionary with two keys, "weekday" and "weekend", each containing a list of
             dictionaries. Each dictionary represents a train's schedule, with:
                 - "train_id": The unique identifier for the train.
-                - "arrival_time": The time at which the train arrives at the specified stop.
+                - "departure_time": The time at which the train departs from the specified stop.
         """
 
         stop_codes = [
@@ -91,10 +91,10 @@ class ScheduleGenerator:
                 most_recent.append(max(same_train_id, key=lambda x: x["release_name"]))
 
             most_recent = [
-                {"train_id": str(train["block_id"]), "arrival_time": train["arrival_time"]}
+                {"train_id": str(train["block_id"]), "departure_time": train["arrival_time"]}
                 for train in most_recent
             ]
-            sorted_trains.append(sorted(most_recent, key=lambda x: x["arrival_time"]))
+            sorted_trains.append(sorted(most_recent, key=lambda x: x["departure_time"]))
 
         return {"weekday": sorted_trains[0], "weekend": sorted_trains[1]}
 
@@ -114,8 +114,8 @@ class ScheduleGenerator:
             dict[str, list[dict[str, str]]]: A dictionary with two keys, "weekday" and "weekend", each containing a list of
             dictionaries. Each dictionary represents a train's schedule, with:
                 - "train_id": The unique identifier for the train.
-                - "depart_time": The departure time from the origin stop.
-                - "arrive_time": The arrival time at the destination stop.
+                - "departure_time": The departure time from the origin stop.
+                - "arrival_time": The arrival time at the destination stop.
         """
 
         def flatten_schedule(orig_schedule, dest_schedule):
@@ -130,8 +130,8 @@ class ScheduleGenerator:
             schedule = [
                 {
                     "train_id": str(k),
-                    "departure_time": v["arrival_time"],
-                    "arrival_time": dest_flattened[k]["arrival_time"],
+                    "departure_time": v["departure_time"],
+                    "arrival_time": dest_flattened[k]["departure_time"],
                 }
                 for k, v in orig_flattened.items()
             ]

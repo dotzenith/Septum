@@ -11,7 +11,7 @@ class StationInput(BaseModel):
 
     @field_validator("line")
     def validate_line(cls, value):
-        if value not in schedule.LINES.keys():
+        if value not in [line["line_code"] for line in schedule.LINES]:
             raise HTTPException(status_code=400, detail=f"Invalid Line: {value}")
         return value
 
@@ -32,7 +32,7 @@ class ScheduleInput(BaseModel):
 
     @field_validator("line")
     def validate_line(cls, value):
-        if value not in schedule.LINES.keys():
+        if value not in [line["line_code"] for line in schedule.LINES]:
             raise HTTPException(status_code=400, detail=f"Invalid Line: {value}")
         return value
 
@@ -56,19 +56,34 @@ class ScheduleInput(BaseModel):
         return self
 
 
-class StationOuput(BaseModel):
+class StationOutput(BaseModel):
+    station_name: str
+    parameter: str
+
+
+class BusAndTrolleyOutput(BaseModel):
+    route_number: str
+    route_name: str
+
+
+class LinesOutput(BaseModel):
+    line_code: str
+    line_name: str
+
+
+class ScheduleStationOuput(BaseModel):
     stop_id: str
     stop_name: str
 
 
 class ScheduleDestOnlyOutput(BaseModel):
-    arrival_time: str
+    departure_time: str
     train_id: str
 
 
 class ScheduleDestAndOrigItemOutput(BaseModel):
-    arrival_time: str
     departure_time: str
+    arrival_time: str
     train_id: str
 
 

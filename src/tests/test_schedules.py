@@ -2,14 +2,12 @@
 A module to test the schedule endpoints
 """
 
-import json
-
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import TypeAdapter
 
 from theseptaapi.main import app, schedule
-from theseptaapi.models import ScheduleMainOutput, StationOuput
+from theseptaapi.models import LinesOutput, ScheduleMainOutput, ScheduleStationOuput
 
 
 class TestReturnData:
@@ -19,19 +17,19 @@ class TestReturnData:
 
     client = TestClient(app)
 
-    def test_num_of_lines(self):
-        num_lines_internal = len(schedule.LINES.keys())
-        num_lines_endpoint = len(json.loads(self.client.get("/schedule/lines").content))
-        assert num_lines_internal == num_lines_endpoint
+    def test_get_lines(self):
+        request = self.client.get("/schedule/lines")
+        assert request.status_code == 200
+        TypeAdapter(list[LinesOutput]).validate_json(request.content)
 
     @pytest.mark.parametrize(
         "line",
-        list(schedule.LINES.keys()),
+        [line["line_code"] for line in schedule.LINES],
     )
     def test_all_lines_return_stations(self, line):
         request = self.client.get(f"/schedule/stations?line={line}")
         assert request.status_code == 200
-        TypeAdapter(list[StationOuput]).validate_json(request.content)
+        TypeAdapter(list[ScheduleStationOuput]).validate_json(request.content)
 
     def test_invalid_line(self):
         assert self.client.get("/schedule/stations?line=NON_EXISTENT_LINE").status_code == 400

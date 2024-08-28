@@ -28,7 +28,7 @@ SeptaPlusPlus is a free API that aims to augment [Septa's Public API](https://ww
 
 The Base URL is:
 ```
-https://septa.jawn.website/api/
+https://septa.jawn.website/api
 ```
 
 Please see the [docs](https://septa.jawn.website/) for usage of the various endpoints

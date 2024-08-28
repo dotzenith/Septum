@@ -1,15 +1,27 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.openapi.docs import get_swagger_ui_html
 
 import septaplusplus.scrapers as scrapers
 from septaplusplus.models import (BusAndTrolleyOutput, LinesOutput,
-                                ScheduleInput, ScheduleMainOutput,
-                                ScheduleStationOuput, StationInput,
-                                StationOutput)
+                                  ScheduleInput, ScheduleMainOutput,
+                                  ScheduleStationOuput, StationInput,
+                                  StationOutput)
 from septaplusplus.schedules import ScheduleGenerator
 
-app = FastAPI(docs_url="/")
+app = FastAPI(docs_url=None)
+
+
+@app.get("/", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title="SEPTA Plus Plus",
+        swagger_favicon_url="https://danshu.co/favicon.ico",
+    )
+
+
 schedule = ScheduleGenerator()
 
 

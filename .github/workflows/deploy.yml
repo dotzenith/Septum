@@ -23,4 +23,4 @@ jobs:
           docker compose down
           git pull origin main
           docker build -t septaplusplus:latest .
-          docker compose up
+          docker compose up -d

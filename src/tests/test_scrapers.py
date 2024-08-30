@@ -2,12 +2,17 @@
 A module to test the scraper endpoints
 """
 
+# ruff: noqa: E402
+
+from unittest import mock
+
 import pytest
 from fastapi.testclient import TestClient
-from septaplusplus.models import StationOutput, BusAndTrolleyOutput
 from pydantic import TypeAdapter
 
+mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda f: f).start()
 from septaplusplus.main import app
+from septaplusplus.models import BusAndTrolleyOutput, StationOutput
 
 
 class TestReturnData:

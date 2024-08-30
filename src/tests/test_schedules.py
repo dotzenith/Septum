@@ -2,12 +2,18 @@
 A module to test the schedule endpoints
 """
 
+# ruff: noqa: E402
+
+from unittest import mock
+
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import TypeAdapter
 
+mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda f: f).start()
 from septaplusplus.main import app, schedule
-from septaplusplus.models import LinesOutput, ScheduleMainOutput, ScheduleStationOuput
+from septaplusplus.models import (LinesOutput, ScheduleMainOutput,
+                                  ScheduleStationOuput)
 
 
 class TestReturnData:
@@ -54,7 +60,9 @@ class TestReturnData:
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_invalid_direction(self):
-        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&direction=NON_EXISTENT_DIRECTION")
+        request = self.client.get(
+            "/api/schedule?line=TRE&orig=Trenton&direction=NON_EXISTENT_DIRECTION"
+        )
         assert request.status_code == 422
 
     def test_invalid_station_for_line(self):
@@ -64,7 +72,9 @@ class TestReturnData:
 
     def test_invalid_dest_for_line(self):
         # Trenton line does have the Trenton station, but not the Eastwick station
-        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&dest=Eastwick&direction=inbound")
+        request = self.client.get(
+            "/api/schedule?line=TRE&orig=Trenton&dest=Eastwick&direction=inbound"
+        )
         assert request.status_code == 400
 
     @pytest.mark.parametrize(

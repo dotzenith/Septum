@@ -20,6 +20,7 @@ jobs:
         command_timeout: 30m
         script: |
           cd ~/web/SeptaPlusPlus
+          docker compose down
           git pull origin main
           docker build -t septaplusplus:latest .
-          bash ~/.bin/septa_time
+          docker compose up

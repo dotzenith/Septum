@@ -48,8 +48,8 @@ SeptaPlusPlus is relatively easy to self-host. The only requirements are [Docker
 #### ❖ Clone repo and cd into it
 
 ```
-$ git clone https://github.com/dotzenith/SeptaPlusPlus.git
-$ cd SeptaPlusPlus
+git clone https://github.com/dotzenith/SeptaPlusPlus.git
+cd SeptaPlusPlus
 ```
 
 <b></b>
@@ -57,13 +57,13 @@ $ cd SeptaPlusPlus
 #### ❖ Build docker image
 
 ```
-$ docker build -t septaplusplus:latest .
+docker build -t septaplusplus:latest .
 ```
 
 #### ❖ Run the container
 
 ```
-$ docker run -p 8000:8000 -d --name septa septaplusplus:latest
+docker compose up -d
 ```
 
 #### ❖ Set up a reverse proxy

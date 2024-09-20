@@ -10,12 +10,12 @@ from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
 
-import septaplusplus.scrapers as scrapers
-from septaplusplus.models import (BusAndTrolleyOutput, LinesOutput,
+import septum.scrapers as scrapers
+from septum.models import (BusAndTrolleyOutput, LinesOutput,
                                   ScheduleInput, ScheduleMainOutput,
                                   ScheduleStationOuput, StationInput,
                                   StationOutput)
-from septaplusplus.schedules import ScheduleGenerator
+from septum.schedules import ScheduleGenerator
 
 redis_host = os.getenv("REDIS_HOST", "localhost")
 redis_port = os.getenv("REDIS_PORT", 6379)
@@ -160,7 +160,7 @@ async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
         This is because Gray 30th Street, is towards the city (i.e inbound). Your direction cannot be 1,
         because you cannot go to Gray 30th Street while going away from the city (i.e outbound). The API the best it
         can to validate this and return an error message, but there might be edge cases that still slip away, please
-        open an issue on https://github.com/dotzenith/septaplusplus
+        open an issue on https://github.com/dotzenith/septum
 
         Also note that schedule items returned when `dest` is not passed in might have inconsistencies.
         Some of the items might be for trains that don't go anywhere after this station. Therefore passing in `dest`

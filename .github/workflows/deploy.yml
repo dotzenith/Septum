@@ -18,8 +18,8 @@ jobs:
         port: 2222
         command_timeout: 30m
         script: |
-          cd ~/web/SeptaPlusPlus
+          cd ~/web/Septum
           docker compose down
           git pull origin main
-          docker build -t septaplusplus:latest .
+          docker build -t septum:latest .
           docker compose up -d

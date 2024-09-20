@@ -11,8 +11,8 @@ from fastapi.testclient import TestClient
 from pydantic import TypeAdapter
 
 mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda f: f).start()
-from septaplusplus.main import app, schedule
-from septaplusplus.models import (LinesOutput, ScheduleMainOutput,
+from septum.main import app, schedule
+from septum.models import (LinesOutput, ScheduleMainOutput,
                                   ScheduleStationOuput)
 
 

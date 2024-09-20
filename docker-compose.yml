@@ -8,9 +8,9 @@ services:
     networks:
       - redis-network
 
-  septa:
-    image: septaplusplus:latest
-    container_name: SeptaPlusPlus
+  septum:
+    image: septum:latest
+    container_name: Septum
     ports:
       - "4000:8000"
     depends_on:

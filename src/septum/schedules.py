@@ -2,7 +2,7 @@ from typing import Optional, OrderedDict
 
 import requests
 
-from septum.enum import Direction
+from septum.enums import Direction
 
 
 class ScheduleGenerator:

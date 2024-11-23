@@ -54,16 +54,10 @@ cd Septum
 
 <b></b>
 
-#### ❖ Build docker image
+#### ❖ Build the image and run the container
 
 ```
-docker build -t septum:latest .
-```
-
-#### ❖ Run the container
-
-```
-docker compose up -d
+docker compose up --build -d
 ```
 
 #### ❖ Set up a reverse proxy

@@ -68,7 +68,7 @@ After the step above, set up a reverse proxy using a webserver of your choice an
 
 ### ❖ What's New?
 
-0.2.0 - Rename to septum
+0.2.1 - Use a different source for `/api/stations`
 
 ---
 

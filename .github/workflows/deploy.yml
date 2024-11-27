@@ -21,5 +21,4 @@ jobs:
           cd ~/web/Septum
           docker compose down
           git pull origin main
-          docker build -t septum:latest .
-          docker compose up -d
+          docker compose up --build -d

@@ -54,16 +54,10 @@ cd Septum
 
 <b></b>
 
-#### ❖ Build docker image
+#### ❖ Build the image and run the container
 
 ```
-docker build -t septum:latest .
-```
-
-#### ❖ Run the container
-
-```
-docker compose up -d
+docker compose up --build -d
 ```
 
 #### ❖ Set up a reverse proxy
@@ -74,7 +68,7 @@ After the step above, set up a reverse proxy using a webserver of your choice an
 
 ### ❖ What's New?
 
-0.2.0 - Rename to septum
+0.2.1 - Use a different source for `/api/stations`
 
 ---
 

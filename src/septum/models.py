@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pydantic import BaseModel, field_validator, model_validator
 
-from septum.enum import Direction
+from septum.enums import Direction
 from septum.schedules import ScheduleGenerator
 
 schedule = ScheduleGenerator()

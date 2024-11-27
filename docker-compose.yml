@@ -9,7 +9,9 @@ services:
       - redis-network
 
   septum:
-    image: septum:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: Septum
     ports:
       - "4000:8000"

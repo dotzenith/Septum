@@ -38,7 +38,7 @@ SECONDS_IN_A_DAY = 86400
 async def custom_swagger_ui_html():
     return get_swagger_ui_html(
         openapi_url="/openapi.json",
-        title="SEPTA Plus Plus",
+        title="Septum",
         swagger_favicon_url="https://danshu.co/favicon.ico",
     )
 

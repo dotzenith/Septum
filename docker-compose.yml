@@ -5,6 +5,7 @@ services:
     volumes:
       - redis-data:/data
     command: redis-server
+    restart: unless-stopped
     networks:
       - redis-network
 
@@ -13,6 +14,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: Septum
+    restart: unless-stopped
     ports:
       - "4000:8000"
     depends_on:

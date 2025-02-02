@@ -41,20 +41,20 @@ class TestReturnData:
         assert self.client.get("/api/schedule/stations?line=NON_EXISTENT_LINE").status_code == 400
 
     def test_valid_single_station_schedule(self):
-        request = self.client.get("/api/schedule?line=TRE&orig=Trenton&direction=inbound")
+        request = self.client.get("/api/schedule?line=TRE&orig=Torresdale&direction=inbound")
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_valid_orig_to_dest_inbound_schedule(self):
         request = self.client.get(
-            "/api/schedule?line=TRE&orig=Trenton&dest=Gray 30th Street&direction=inbound"
+            "/api/schedule?line=TRE&orig=Torresdale&dest=Gray 30th Street&direction=inbound"
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_valid_orig_to_dest_outbound_schedule(self):
         request = self.client.get(
-            "/api/schedule?line=TRE&orig=Gray 30th Street&dest=Trenton&direction=outbound"
+            "/api/schedule?line=TRE&orig=Gray 30th Street&dest=Torresdale&direction=outbound"
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
@@ -89,7 +89,7 @@ class TestReturnData:
             ("MED", "Wawa", "Temple University", "inbound"),
             ("NOR", "Main Street", "Penn Medicine Station", "inbound"),
             ("PAO", "Thorndale", "Overbrook", "inbound"),
-            ("TRE", "Trenton", "Temple University", "inbound"),
+            ("TRE", "Torresdale", "Temple University", "inbound"),
             ("WAR", "Warminster", "Fern Rock T C", "inbound"),
             ("WIL", "Newark", "Wilmington", "inbound"),
             ("WTR", "Yardley", "Elkins Park", "inbound"),
@@ -114,7 +114,7 @@ class TestReturnData:
             ("MED", "Wawa", "Temple University", "outbound"),
             ("NOR", "Main Street", "Penn Medicine Station", "outbound"),
             ("PAO", "Thorndale", "Overbrook", "outbound"),
-            ("TRE", "Trenton", "Temple University", "outbound"),
+            ("TRE", "Torresdale", "Temple University", "outbound"),
             ("WAR", "Warminster", "Fern Rock T C", "outbound"),
             ("WIL", "Newark", "Wilmington", "outbound"),
             ("WTR", "Yardley", "Elkins Park", "outbound"),

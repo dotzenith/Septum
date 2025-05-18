@@ -18,7 +18,7 @@ jobs:
         port: 2222
         command_timeout: 30m
         script: |
-          cd ~/web/Septum
+          cd /srv/web/Septum
           docker compose down
           git pull origin main
           docker compose up --build -d

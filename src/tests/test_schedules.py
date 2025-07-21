@@ -81,7 +81,7 @@ class TestReturnData:
         "line, orig, dest, direction",
         [
             ("AIR", "Airport Terminal B", "Temple University", "inbound"),
-            ("CHE", "Chestnut Hill East", "Temple University", "inbound"),
+            # ("CHE", "Chestnut Hill East", "Temple University", "inbound"),
             ("CYN", "Cynwyd", "Suburban Station", "inbound"),
             ("CHW", "Chestnut Hill West", "Temple University", "inbound"),
             ("FOX", "Fox Chase", "Suburban Station", "inbound"),

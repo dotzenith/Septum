@@ -2,9 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from fastapi import HTTPException
 
-STATION_NAMES_URL = "https://app.septa.org/nta/"
+STATION_NAMES_URL = "https://www3.septa.org/VIRegionalRail.html"
 BUS_AND_TROLLEY_ROUTES_URL = "https://www3.septa.org/VIBusAndTrolley.html"
-
 
 def get_station_names() -> list[dict[str, str]]:
     """
@@ -22,23 +21,16 @@ def get_station_names() -> list[dict[str, str]]:
             detail=f"Unable to fetch station names. The request to {STATION_NAMES_URL} returned {page.status_code}",
         )
     soup = BeautifulSoup(page.content, "html.parser")
-    select = soup.find('select', {'name': 'loc_a'})
-
-    if not select:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Unable to fetch station names. The request to {STATION_NAMES_URL} returned no stations for the selected item",
-        )
-
-    options = select.find_all('option') # type: ignore
-
+    tables = soup.find_all("table")
     stations = []
 
-    for option in options:
-        stations.append({"station_name": option.text.strip(), "parameter": option.get('value')})
+    for table in tables:
+        rows = table.find_all("tr")[1:]
+        for row in rows:
+            cells = [cell.get_text() for cell in row.find_all("td")]
+            stations.append({"station_name": cells[0].strip(), "parameter": cells[1].strip()})
 
     return stations
-
 
 def get_bus_routes() -> list[dict[str, str]]:
     """

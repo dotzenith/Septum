@@ -68,7 +68,7 @@ After the step above, set up a reverse proxy using a webserver of your choice an
 
 ### ❖ What's New?
 
-0.2.2 - Update and fix tests
+0.2.3 - Revert to using `VIRegionalRail.html` for station names
 
 ---
 

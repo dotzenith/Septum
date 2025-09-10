@@ -28,7 +28,15 @@ def get_station_names() -> list[dict[str, str]]:
         rows = table.find_all("tr")[1:]
         for row in rows:
             cells = [cell.get_text() for cell in row.find_all("td")]
-            stations.append({"station_name": cells[0].strip(), "parameter": cells[1].strip()})
+
+            name = cells[0].strip()
+            parameter = cells[1].strip()
+
+            # No way around this, Septa is just wrong
+            if parameter == "Wayne":
+                parameter = "Wayne Station"
+
+            stations.append({"station_name": name, "parameter": parameter})
 
     return stations
 

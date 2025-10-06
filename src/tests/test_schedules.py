@@ -12,8 +12,7 @@ from pydantic import TypeAdapter
 
 mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda f: f).start()
 from septum.main import app, schedule
-from septum.models import (LinesOutput, ScheduleMainOutput,
-                                  ScheduleStationOuput)
+from septum.models import LinesOutput, ScheduleMainOutput, ScheduleStationOuput
 
 
 class TestReturnData:
@@ -47,14 +46,14 @@ class TestReturnData:
 
     def test_valid_orig_to_dest_inbound_schedule(self):
         request = self.client.get(
-            "/api/schedule?line=TRE&orig=Torresdale&dest=Gray 30th Street&direction=inbound"
+            "/api/schedule?line=TRE&orig=Torresdale&dest=Gray 30th St Station&direction=inbound"
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
 
     def test_valid_orig_to_dest_outbound_schedule(self):
         request = self.client.get(
-            "/api/schedule?line=TRE&orig=Gray 30th Street&dest=Torresdale&direction=outbound"
+            "/api/schedule?line=TRE&orig=Gray 30th St Station&dest=Torresdale&direction=outbound"
         )
         assert request.status_code == 200
         ScheduleMainOutput.model_validate_json(request.content)
@@ -87,11 +86,11 @@ class TestReturnData:
             ("FOX", "Fox Chase", "Suburban Station", "inbound"),
             ("LAN", "Doylestown", "Jefferson Station", "inbound"),
             ("MED", "Wawa", "Temple University", "inbound"),
-            ("NOR", "Main Street", "Penn Medicine Station", "inbound"),
+            ("NOR", "Main Street", "Suburban Station", "inbound"),
             ("PAO", "Thorndale", "Overbrook", "inbound"),
             ("TRE", "Torresdale", "Temple University", "inbound"),
-            ("WAR", "Warminster", "Fern Rock T C", "inbound"),
-            ("WIL", "Newark", "Wilmington", "inbound"),
+            ("WAR", "Warminster", "Fern Rock Transit Center", "inbound"),
+            ("WIL", "Wilmington", "Gray 30th St Station", "inbound"),
             ("WTR", "Yardley", "Elkins Park", "inbound"),
         ],
     )

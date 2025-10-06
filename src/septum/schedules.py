@@ -103,7 +103,11 @@ class ScheduleGenerator:
         raw_schedule = requests.get(self.SCHEDULE_URL.format(line, stop_dict[orig])).json()
         direction_int = self.LINES_DIRECTION[line][direction]
 
-        service_ids = (["M1"], ["M2", "M3"])
+        # First one is for weekdays, second one is for weekends
+        # This has already changed before, and will likely change
+        # again, but so far, I can't think of a reliable way to
+        # to tell which one is which
+        service_ids = (["SID184626"], ["SID184625"])
         sorted_trains = []
 
         for service_id in service_ids:

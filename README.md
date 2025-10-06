@@ -68,7 +68,7 @@ After the step above, set up a reverse proxy using a webserver of your choice an
 
 ### ❖ What's New?
 
-0.2.3 - Revert to using `VIRegionalRail.html` for station names
+0.2.4 - Fixes to Weekend and Weekday handling for schedules
 
 ---
 

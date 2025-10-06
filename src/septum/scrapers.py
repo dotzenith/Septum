@@ -5,6 +5,7 @@ from fastapi import HTTPException
 STATION_NAMES_URL = "https://www3.septa.org/VIRegionalRail.html"
 BUS_AND_TROLLEY_ROUTES_URL = "https://www3.septa.org/VIBusAndTrolley.html"
 
+
 def get_station_names() -> list[dict[str, str]]:
     """
     Scrapes STATION_NAMES_URL to get the inputs used by `/NextToArrive/index.php`
@@ -39,6 +40,7 @@ def get_station_names() -> list[dict[str, str]]:
             stations.append({"station_name": name, "parameter": parameter})
 
     return stations
+
 
 def get_bus_routes() -> list[dict[str, str]]:
     """

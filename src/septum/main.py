@@ -11,10 +11,15 @@ from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
 
 import septum.scrapers as scrapers
-from septum.models import (BusAndTrolleyOutput, LinesOutput,
-                                  ScheduleInput, ScheduleMainOutput,
-                                  ScheduleStationOuput, StationInput,
-                                  StationOutput)
+from septum.models import (
+    BusAndTrolleyOutput,
+    LinesOutput,
+    ScheduleInput,
+    ScheduleMainOutput,
+    ScheduleStationOuput,
+    StationInput,
+    StationOutput,
+)
 from septum.schedules import ScheduleGenerator
 
 redis_host = os.getenv("REDIS_HOST", "localhost")

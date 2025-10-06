@@ -1,6 +1,6 @@
 [project]
 name = "septum"
-version = "0.2.3"
+version = "0.2.4"
 description = "Endpoints to augment septa's public API"
 authors = [
     { name = "dotzenith", email = "contact@danshu.co" }
@@ -18,8 +18,8 @@ requires-python = ">= 3.11"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "pytest>=8.3.2",
     "black>=24.8.0",
 ]

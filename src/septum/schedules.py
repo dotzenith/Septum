@@ -107,7 +107,7 @@ class ScheduleGenerator:
         # This has already changed before, and will likely change
         # again, but so far, I can't think of a reliable way to
         # to tell which one is which
-        service_ids = (["SID184626"], ["SID184625"])
+        service_ids = (["SID185176"], ["SID185172"])
         sorted_trains = []
 
         for service_id in service_ids:

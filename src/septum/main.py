@@ -95,7 +95,6 @@ async def get_trolley_routes():
 
 # Schedule Endpoints
 @app.get("/api/schedule/lines", response_model=list[LinesOutput])
-@cache(expire=SECONDS_IN_A_DAY)
 async def get_lines():
     """
     Retrieve a list of all available lines. Each line is represented by its code and name.
@@ -107,7 +106,6 @@ async def get_lines():
 
 
 @app.get("/api/schedule/stations", response_model=list[ScheduleStationOuput])
-@cache(expire=SECONDS_IN_A_DAY)
 async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
     """
     Retrieve a list of stations for a specific line.
@@ -134,7 +132,6 @@ async def get_stations_for_lines(line: Annotated[StationInput, Depends()]):
 
 
 @app.get("/api/schedule", response_model=ScheduleMainOutput)
-@cache(expire=SECONDS_IN_A_DAY)
 async def get_schedule_for_station(query: Annotated[ScheduleInput, Depends()]):
     """
     Retrieve the schedule for a specific station on a given route.

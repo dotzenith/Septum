@@ -68,7 +68,7 @@ After the step above, set up a reverse proxy using a webserver of your choice an
 
 ### ❖ What's New?
 
-0.2.7 - Remove cache from schedule endpoints
+0.2.8 - Fix Schedules again
 
 ---
 

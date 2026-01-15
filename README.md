@@ -1,23 +1,5 @@
 <h2 align="center"> ━━━━━━  ❖  ━━━━━━ </h2>
 
-<!-- BADGES -->
-<div align="center">
-   <p></p>
-
-   <img src="https://img.shields.io/github/stars/dotzenith/Septum?color=DDB6F2&labelColor=302D41&style=for-the-badge">
-
-   <img src="https://img.shields.io/github/forks/dotzenith/Septum?color=F8BD96&labelColor=302D41&style=for-the-badge">
-
-   <img src="https://img.shields.io/github/actions/workflow/status/dotzenith/Septum/deploy.yml?branch=main&color=89b4fa&labelColor=302D41&style=for-the-badge&label=Deployment"/>
-
-   <img src="https://img.shields.io/github/actions/workflow/status/dotzenith/Septum/test.yml?branch=main&color=ABE9B3&labelColor=302D41&style=for-the-badge&label=Tests"/>
-   <br>
-</div>
-
-<p/>
-
----
-
 ### ❖ Information
 
 Septum is a free API that aims to augment [Septa's Public API](https://www3.septa.org/) with useful endpoints that it lacks.

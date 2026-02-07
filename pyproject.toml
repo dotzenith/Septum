@@ -1,6 +1,6 @@
 [project]
 name = "septum"
-version = "0.2.8"
+version = "0.2.9"
 description = "Endpoints to augment septa's public API"
 authors = [
     { name = "dotzenith", email = "contact@danshu.co" }

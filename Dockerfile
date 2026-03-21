@@ -3,6 +3,6 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 COPY . .
-RUN uv sync --frozen --no-cache
+RUN uv sync --no-cache
 
 CMD ["uv", "run", "fastapi", "run", "src/septum/main.py"]

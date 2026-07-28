@@ -1,3 +1,5 @@
+import datetime
+import time
 from typing import Optional, OrderedDict
 
 import requests
@@ -8,6 +10,8 @@ from septum.enums import Direction
 class ScheduleGenerator:
     STOPS_URL = "https://flat-api.septa.org/stops/{}/stops.json"
     SCHEDULE_URL = "https://flat-api.septa.org/schedules/stops/{}/{}/schedule.json"
+    CALENDAR_URL = "https://flat-api.septa.org/calendar.json"
+    CALENDAR_TTL = 3600
     LINES = [
         {"line_code": "AIR", "line_name": "Airport"},
         {"line_code": "CHE", "line_name": "Chestnut Hill East"},
@@ -38,6 +42,85 @@ class ScheduleGenerator:
         "WIL": {"inbound": 0, "outbound": 1},
         "WTR": {"inbound": 1, "outbound": 0},
     }
+
+    # (monotonic timestamp, {"YYYYMMDD": ["SID...", ...]}) shared by every instance
+    _calendar: Optional[tuple[float, dict[str, list[str]]]] = None
+
+    @classmethod
+    def _get_calendar(cls) -> dict[str, list[str]]:
+        """
+        Fetches septa's calendar, which maps each date to the service_ids running
+        that day. Cached for CALENDAR_TTL since it only changes on a new release.
+        """
+        cached = cls._calendar
+        if cached is not None and (time.monotonic() - cached[0]) < cls.CALENDAR_TTL:
+            return cached[1]
+
+        try:
+            raw = requests.get(cls.CALENDAR_URL, timeout=10).json()
+        except requests.RequestException:
+            if cached is not None:
+                return cached[1]  # better a stale calendar than no schedules at all
+            raise
+
+        calendar = {
+            date: [sid for sid in entry.get("service_id", []) if sid.startswith("SID")]
+            for date, entry in raw.items()
+        }
+        cls._calendar = (time.monotonic(), calendar)
+        return calendar
+
+    @classmethod
+    def get_service_ids(cls) -> tuple[list[str], list[str]]:
+        """
+        Works out which service_ids are weekday ones and which are weekend ones
+        for the schedule currently in effect.
+
+        Returns:
+            tuple: (weekday service_ids, weekend service_ids)
+
+        Note:
+            These used to be hardcoded, which meant updating them by hand every
+            time septa cut a release. The calendar tells us which service_ids run
+            on a given date, so the day of the week that date lands on is all we
+            actually need to tell weekday and weekend apart.
+
+            septa also rotates variants between weeks (one gets swapped out for
+            another for a stretch of days), and those variants disagree about a
+            handful of late night trains. So each bucket comes from a single
+            upcoming date rather than everything in the feed, which would splice
+            two different weeks' timetables together.
+        """
+        calendar = cls._get_calendar()
+        today = datetime.date.today()
+        dates = sorted(datetime.datetime.strptime(date, "%Y%m%d").date() for date in calendar)
+
+        def ids_on(target: datetime.date) -> set[str]:
+            return set(calendar.get(target.strftime("%Y%m%d"), []))
+
+        def soonest(*days: int) -> Optional[datetime.date]:
+            matching = [date for date in dates if date.weekday() in days]
+            upcoming = [date for date in matching if date >= today]
+
+            # fall back to the most recent past date if the feed has gone stale
+            if upcoming:
+                return upcoming[0]
+            return matching[-1] if matching else None
+
+        weekday_date = soonest(0, 1, 2, 3, 4)
+        weekday = ids_on(weekday_date) if weekday_date is not None else set()
+
+        # Saturday and Sunday get their own service_ids and don't always agree,
+        # so take both, but anchor them to the same Saturday. Otherwise asking on
+        # a Sunday would pair today with next weekend's Saturday and splice two
+        # different weeks together.
+        weekend_date = soonest(5, 6)
+        weekend: set[str] = set()
+        if weekend_date is not None:
+            saturday = weekend_date - datetime.timedelta(days=weekend_date.weekday() - 5)
+            weekend = ids_on(saturday) | ids_on(saturday + datetime.timedelta(days=1))
+
+        return sorted(weekday), sorted(weekend)
 
     def get_lines(self) -> list[dict[str, str]]:
         """
@@ -103,13 +186,9 @@ class ScheduleGenerator:
         raw_schedule = requests.get(self.SCHEDULE_URL.format(line, stop_dict[orig])).json()
         direction_int = self.LINES_DIRECTION[line][direction]
 
-        # First one is for weekdays, second one is for weekends
-        # This has already changed before, and will likely change
-        # again, but so far, I can't think of a reliable way to
-        # to tell which one is which
-
-        # Lists because sometimes weekend times have two service_ids associated with them
-        service_ids = (["SID185189"], ["SID185186"])
+        # First one is for weekdays, second one is for weekends. Both are lists
+        # because a single day can have more than one service_id attached to it
+        service_ids = self.get_service_ids()
         sorted_trains = []
 
         for service_id in service_ids:

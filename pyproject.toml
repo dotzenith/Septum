@@ -1,18 +1,18 @@
 [project]
 name = "septum"
-version = "0.3.1"
+version = "0.3.2"
 description = "Endpoints to augment septa's public API"
 authors = [
     { name = "dotzenith", email = "contact@danshu.co" }
 ]
 dependencies = [
-    "fastapi[standard]>=0.112.1",
-    "beautifulsoup4>=4.12.3",
-    "requests>=2.32.3",
+    "fastapi[standard]>=0.160.0",
+    "beautifulsoup4>=4.15.0",
+    "requests>=2.34.2",
     "fastapi-cache2[redis]>=0.2.2",
 ]
 readme = "README.md"
-requires-python = ">= 3.11"
+requires-python = ">= 3.14"
 
 [build-system]
 requires = ["hatchling"]
@@ -20,8 +20,8 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.3.2",
-    "black>=24.8.0",
+    "pytest>=9.1.1",
+    "black>=26.10.1",
 ]
 
 [tool.black]

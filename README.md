@@ -50,7 +50,7 @@ After the step above, set up a reverse proxy using a webserver of your choice an
 
 ### ❖ What's New?
 
-0.3.0 - Fix Schedules once and for all I think
+0.3.2 - Fix dependencies across the board
 
 ---
 
